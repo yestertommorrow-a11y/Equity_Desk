@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Equity Desk · Stock Research</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <a class="skip" href="#view">Skip to company research</a>
+  <header class="topbar">
+    <div class="top-inner">
+      <a class="brand" href="/" aria-label="Equity Desk home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Equity<span>Desk</span></a>
+      <div class="search-wrap">
+        <form id="search-form" role="search" autocomplete="off">
+          <span class="search-icon" aria-hidden="true"></span>
+          <input id="search" type="search" placeholder="Search ticker or company" aria-label="Search ticker or company" aria-controls="search-results" aria-expanded="false">
+          <kbd title="Search shortcut">Ctrl K</kbd>
+        </form>
+        <div id="search-results" class="search-results" hidden></div>
+      </div>
+      <div class="top-actions">
+        <button id="theme" class="ghost" type="button" aria-label="Switch color theme" title="Switch color theme">◐</button>
+        <button id="watch-toggle" class="ghost watch-button" type="button" aria-expanded="false" aria-controls="watch-menu"><span aria-hidden="true">☆</span> Watchlist</button>
+      </div>
+      <div id="watch-menu" class="search-results watch-menu" hidden></div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="context-line">
+      <div id="breadcrumbs" class="breadcrumbs"><span>Equities</span><span>›</span><strong>AAPL</strong></div>
+      <button id="pin" class="ghost pin" type="button" aria-pressed="false"><span aria-hidden="true">☆</span> Watch</button>
+    </div>
+    <section id="hero" class="company" aria-label="Company quote"></section>
+    <nav id="tabs" class="tabs" aria-label="Company sections">
+      <a data-tab="summary" href="#summary">Summary</a>
+      <a data-tab="financials" href="#financials">Financials</a>
+      <a data-tab="ratios" href="#ratios">Ratios</a>
+      <a data-tab="peers" href="#peers">Peers</a>
+      <a data-tab="transcripts" href="#transcripts">Transcripts</a>
+      <a data-tab="documents" href="#documents">Documents</a>
+      <a data-tab="charts" href="#charts">Charts</a>
+      <a data-tab="classic" href="#classic">Classic View</a>
+      <a data-tab="statistics" href="#statistics">Statistics</a>
+      <a data-tab="splits" href="#splits">Stock Splits</a>
+    </nav>
+    <div id="view" tabindex="-1"></div>
+    <footer class="footer"><span>Equity Desk</span><span>Market and financial data via OpenBB providers. Check each section for coverage, dates, and sources.</span><button id="refresh" class="text-button" type="button">Refresh data</button></footer>
+  </main>
+  <script defer src="/detail.js"></script>
+  <script defer src="/app.js"></script>
+</body>
+</html>
