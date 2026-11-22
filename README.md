@@ -100,4 +100,6 @@ node tests/fuzz_detail2.mjs public/detail.js     # prints computed values for ma
 
 Equity Desk is for research and education. It is not investment advice. Data comes from third-party providers and may be delayed, incomplete or wrong. Check it against original filings before making decisions.
 
-The bundled TradingView Lightweight Charts library is licensed under Apache 2.0 (see `public/vendor/lightweight-charts-LICENSE.txt`).
+## License
+
+Equity Desk is released under the [MIT License](LICENSE). The bundled TradingView Lightweight Charts library keeps its own Apache 2.0 license (see `public/vendor/lightweight-charts-LICENSE.txt`).
