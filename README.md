@@ -2,6 +2,8 @@
 
 A local stock research dashboard built on [OpenBB](https://github.com/OpenBB-finance/OpenBB) data providers. Look up a company by ticker or name to see its quote, financial statements, ratios, valuation history, peers, price chart, dividends and splits in one place. It runs on your own computer, and the default feeds need no API keys.
 
+**New here? Follow the step-by-step guide to install it and get live data: https://yestertommorrow-a11y.github.io/Equity_Desk/**
+
 ![Equity Desk showing Apple Inc.: quote header, interactive price chart with volume, trailing returns and company profile](docs/screenshot.png)
 
 ## Features
@@ -79,7 +81,7 @@ backend/openbb_data.py  Provider routing, caching, split restatement, peers
 public/                 Front end (index.html, app.js, detail.js, style.css)
 public/vendor/          TradingView Lightweight Charts 5.2.1 (Apache-2.0)
 tests/                  Synthetic-data checks for the backend and calculations
-docs/                   README screenshot
+docs/                   GitHub Pages setup guide and screenshot
 Start Equity Desk.cmd   Windows launcher
 ```
 
