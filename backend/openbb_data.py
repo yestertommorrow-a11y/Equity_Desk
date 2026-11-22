@@ -532,7 +532,8 @@ def get_section(symbol: str, section: str, **kwargs) -> dict:
         range_name = str(kwargs.get("range") or "1Y").upper()
         if range_name not in RANGES and range_name != "YTD":
             raise ValueError("Choose a supported price history range.")
-        limit = int(kwargs.get("limit") or (20 if section in STATEMENTS else 50))
+        limit = kwargs.get("limit")
+        limit = (20 if section in STATEMENTS else 50) if limit is None else int(limit)  # 0 is rejected, not defaulted
         if not 1 <= limit <= 100:
             raise ValueError("Choose a limit from 1 to 100.")
         options = {

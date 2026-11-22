@@ -1,28 +1,103 @@
 # Equity Desk
 
-Equity Desk is a local research dashboard based on the public ROIC.ai quote-page workflow. It opens on AAPL and looks up stocks by ticker or company name. OpenBB supplies the data through Yahoo Finance, SEC EDGAR, Cboe, Nasdaq, and TMX, depending on the listing and dataset. http://127.0.0.1:8766/api/health lists the provider extensions that the running Python can import.
+A local stock research dashboard built on [OpenBB](https://github.com/OpenBB-finance/OpenBB) data providers. Look up a company by ticker or name to see its quote, financial statements, ratios, valuation history, peers, price chart, dividends and splits in one place. It runs on your own computer, and the default feeds need no API keys.
 
-## Open the dashboard
+![Equity Desk showing Apple Inc.: quote header, interactive price chart with volume, trailing returns and company profile](docs/screenshot.png)
 
-Double-click **Start Equity Desk.cmd**, then leave its window open while using the dashboard. The dashboard uses http://127.0.0.1:8766 on this PC. Close the launcher window to stop it. If Codex already has the dashboard running on this port, use the open browser tab.
+## Features
 
-If moving this project to another folder or machine, install Python 3.12 and run these commands in PowerShell from the project folder.
+- **Summary:** quote and key figures (EPS and P/E on a trailing basis, market cap, next earnings date), an interactive price chart, trailing returns against SPY, financial highlights, capital structure, growth rates, company profile, similar companies and news.
+- **Price chart:** area or candlestick chart from [TradingView Lightweight Charts](https://github.com/tradingview/lightweight-charts), with volume, 50- and 200-day moving averages, a log scale, an indexed comparison with SPY, and zoom. If the chart library can't be loaded or built, a simpler built-in chart is drawn instead.
+- **Financials:** income statement, balance sheet and cash flow, as annual, quarterly or trailing 12 months (TTM). Includes unit, per-share and year-over-year views, and CSV export.
+- **Ratios:** profitability, liquidity, credit (including quick ratio and Debt/EBITDA) and valuation, plus a **valuation history** that applies each period's closing price to that period's figures.
+- **Peers:** a side-by-side comparison with up to 10 companies in the same industry and region. You can add, remove and sort companies, and median values are shown.
+- **Statistics, Charts, Classic View:** valuation, yields, trends, ownership and analyst estimates, plus a compact one-page historical overview.
+- **Transcripts, Documents, Stock Splits:** earnings dates, links to filings, and a split timeline.
+- A watchlist, light and dark themes, a <kbd>Ctrl</kbd>+<kbd>K</kbd> search shortcut, and a layout that works on a phone. The watchlist and theme are saved in your browser.
 
-    py -3.12 -m venv .venv
-    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+## Quick start
 
-Then use the same launcher. No provider API keys are required for the feeds currently configured. Lookups need internet access. The watchlist and theme are stored in the current browser.
+You need **Python 3.12** and an internet connection.
 
-## Research workflow
+```powershell
+git clone https://github.com/yestertommorrow-a11y/Equity_Desk.git
+cd Equity_Desk
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-- **Summary** shows the quote, price chart, optional SPY comparison, trailing returns, financial highlights, capital structure, working capital, growth rates, quarterly revenue, EPS and dividends, company profile, and news. Customize the financial highlights and export them to CSV.
-- **Financials** provides income statements, balance sheets, and cash flow statements with annual, quarterly, and trailing 12-month views. Use the units, per-share, year-over-year, line-item, and CSV controls.
-- **Ratios, Charts, and Statistics** cover profitability, credit, liquidity, working capital, valuation, yields, trends, ownership, and analyst estimates when the inputs are available. Derived ratios and chart series depend on the filings and price history available for the selected company.
-- **Transcripts and Documents** display earnings dates and available filings. Full transcripts, slides, peer suggestions, and proprietary research feeds are not configured. Use the source links for original filings.
-- **Classic View and Stock Splits** provide a compact historical overview and a split timeline when supplied by a provider.
+**Windows:** double-click **`Start Equity Desk.cmd`**. It opens http://127.0.0.1:8766 in your browser. Leave its window open while you use the dashboard, and close it to stop the server.
 
-## Reading the data
+**macOS / Linux:**
 
-Prices can be delayed. Check timestamps, currencies, and sources before using a figure. SPY is an ETF proxy for the S&P 500. The chart uses provider price history and shows a rebased comparison when SPY is enabled. Statements retain their reporting currency. Yahoo Finance returns at most five annual or quarterly statements. When the reporting currency is unknown or differs from the quote currency, valuation ratios that mix the two are left blank. Statement per-share figures and share counts are restated to the current share basis using the provider's split history. Each period's own share count shows whether a provider already restated it. Periods that can't be checked stay as reported and are flagged in the section. The statement views require sufficient quarterly filings for TTM. Missing values remain blank, and provider failures are shown in the affected section.
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python server.py --port 8766 --open
+```
 
-Data availability varies by exchange and provider. Tested examples include **AAPL**, **MSFT**, **RY.TO**, and **7203.T**. Exchange-qualified queries such as **NASDAQ:AAPL** also work when the exchange is recognized. The local server does not place trades.
+`server.py` options:
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `--port` | `8765` | Port to serve on. The Windows launcher uses 8766. |
+| `--open` | off | Open the dashboard in your browser. If the port is already serving Equity Desk, it opens that instead. |
+
+Visit `/api/health` to see which OpenBB provider extensions the running Python can load.
+
+## Data sources
+
+Each section shows which provider its data came from. The provider depends on the listing:
+
+| Listing | Providers |
+| --- | --- |
+| US stocks and ETFs | Yahoo Finance, SEC EDGAR (preferred for statements and filings), Nasdaq, Cboe |
+| Canadian listings (for example `RY.TO`, `TSX:SHOP`) | Yahoo Finance, TMX |
+| Other exchanges (for example `7203.T`, `0700.HK`, `VOD.L`) | Yahoo Finance |
+
+If one provider fails, the next one configured for that section is tried. Exchange-prefixed tickers such as `NASDAQ:AAPL` also work. Indices, currencies, futures and crypto pairs (`^GSPC`, `EURUSD=X`) aren't supported; use an ETF that tracks them instead, such as SPY for the S&P 500.
+
+## How the numbers are handled
+
+- **Missing data stays blank.** Gaps aren't filled with zero or estimated, and when a provider fails, the affected section says so.
+- **Currencies:** statements keep their reporting currency. Ratios that would mix the quote currency with a different (or unknown) reporting currency are left blank.
+- **Stock splits:** per-share figures and share counts are restated to the current share basis using the split history. Each period's share count is checked to see whether the provider has already restated it. Periods that can't be checked are left as reported and flagged.
+- **TTM:** built from four consecutive reported quarters in the same currency, and shown only when they're available.
+- **Yahoo Finance limits:** at most five annual or quarterly statements.
+- **Dates:** earnings dates are compared with the current date in New York, because they are US exchange dates.
+- **Prices can be delayed.** Check each section's dates, currency and source before relying on a figure.
+
+## Security
+
+The server only listens on `127.0.0.1`. It rejects requests with an unexpected `Host` header (protection against DNS rebinding), serves only a fixed list of files, and only allows read-only `GET` requests. It doesn't place trades or store credentials.
+
+## Project structure
+
+```
+server.py               Local HTTP server and JSON API
+backend/openbb_data.py  Provider routing, caching, split restatement, peers
+public/                 Front end (index.html, app.js, detail.js, style.css)
+public/vendor/          TradingView Lightweight Charts 5.2.1 (Apache-2.0)
+tests/                  Synthetic-data checks for the backend and calculations
+docs/                   README screenshot
+Start Equity Desk.cmd   Windows launcher
+```
+
+## Tests
+
+The tests use synthetic data, so they don't need network access:
+
+```bash
+python tests/fuzz_backend.py .
+node tests/fuzz_detail.mjs public/detail.js
+node tests/fuzz_valuation.mjs public/detail.js
+node tests/fuzz_detail2.mjs public/detail.js     # prints computed values for manual review
+```
+
+`tests/mock_fetch.js` can be injected into the running page to load a synthetic company, `MOCK`, whose results are known in advance.
+
+## Disclaimer
+
+Equity Desk is for research and education. It is not investment advice. Data comes from third-party providers and may be delayed, incomplete or wrong. Check it against original filings before making decisions.
+
+The bundled TradingView Lightweight Charts library is licensed under Apache 2.0 (see `public/vendor/lightweight-charts-LICENSE.txt`).
